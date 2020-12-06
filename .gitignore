@@ -1,4 +1,5 @@
-/src/resource/
+/src/resource/capstone-dataset
+/src/resource/out
 /target/
 /.bsp/
 /.idea/

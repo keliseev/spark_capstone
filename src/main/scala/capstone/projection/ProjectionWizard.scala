@@ -16,9 +16,7 @@ object ProjectionWizard {
     sqlContext.sql(
       "SELECT p.purchaseId, purchaseTime, billingCost, " +
                      "isConfirmed, sessionId, campaignId, channelId " +
-        "FROM s " +
-        "JOIN p " +
-        "ON s.purchaseId = p.purchaseId")
+        "FROM s JOIN p ON s.purchaseId = p.purchaseId")
   }
 
   def getProjectionsWithAPI: DataFrame = {

@@ -20,11 +20,11 @@ object DemoApp {
     println("Starting...")
     println()
 
-    //        timed("campaigns sql", showTopProfitableCampaignsAPI())
-    //        timed("campaigns api", showTopProfitableCampaignsSQL())
+    //        timed("campaigns api", showTopProfitableCampaignsAPI())
+    //        timed("campaigns sql", showTopProfitableCampaignsSQL())
 
-    timed("campaigns sql", showTopChannelsAPI())
-    timed("campaigns api", showTopChannelsSQL())
+    timed("campaigns sql", showTopChannelsSQL())
+    timed("campaigns api", showTopChannelsAPI())
 
     spark.stop()
   }

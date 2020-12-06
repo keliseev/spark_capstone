@@ -11,9 +11,12 @@ object CampaignsAnalyzer {
 
     sqlContext.sql(
       "SELECT campaignId, sum(billingCost) AS confirmedRevenue " +
-        "FROM (SELECT campaignId, billingCost, isConfirmed " +
-              "FROM sn WHERE isConfirmed = 'true') " +
-        "GROUP BY campaignId ORDER BY confirmedRevenue DESC")
+        "FROM (" +
+        "SELECT campaignId, billingCost, isConfirmed " +
+        "FROM sn " +
+        "WHERE isConfirmed = 'true') " +
+        "GROUP BY campaignId " +
+        "ORDER BY confirmedRevenue DESC")
       .show(10, false)
   }
 
