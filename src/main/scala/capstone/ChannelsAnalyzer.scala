@@ -10,6 +10,8 @@ object ChannelsAnalyzer {
   def showTopChannelsSQL(): Unit = {
     loadProjectionsFromParquet().createOrReplaceTempView("sn")
 
+
+//TODO Try to use window function and rank instead of second group by
     sqlContext.sql("SELECT campaignId, max(struct(uniqueSessions, channelId)) AS w " +
       "FROM (" +
       "SELECT campaignId, channelId, count(sessionId) AS uniqueSessions " +
