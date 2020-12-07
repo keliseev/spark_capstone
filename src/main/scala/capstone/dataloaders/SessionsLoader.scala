@@ -18,10 +18,10 @@ object SessionsLoader {
       .csv("src/resource/capstone-dataset/mobile_app_clickstream/mobile_app_clickstream_0.csv.gz")
       .withColumn("attributes", from_json(col("attributes"), MapType(keyType = StringType, valueType = StringType)))
       .groupBy(col("userId"))
-      .agg(collect_list("attributes").as("attributes"))
+      .agg(collect_list("attributes").as("attributes")) //Use Aggregator of UDAF  udf (Aggregator ()) instead pure udf. Example declaration : spark.udf.register(purchaseAggregatorUDAFName, functions.udaf(new PurchaseAggregator())) PurchaseAggregator need to be implemented
       .select(col("userId"), mergeMaps(col("attributes")).as("merged_attributes"))
       .select(
-        col("userId").as("sessionId"),
+        col("userId").as("sessionId"),  //That is incorrect, need to generate uuid for session. session starts with app_open event and finishes with app_close.
         col("merged_attributes").getItem("purchase_id").as("purchaseId"),
         col("merged_attributes").getItem("campaign_id").as("campaignId"),
         col("merged_attributes").getItem("channel_id").as("channelId"))
