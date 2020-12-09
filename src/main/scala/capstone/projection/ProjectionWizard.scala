@@ -5,42 +5,43 @@ import capstone.DemoApp.spark.sqlContext
 import capstone.caseclasses.Projection
 import capstone.dataloaders.PurchasesLoader.loadPurchasesFromParquet
 import capstone.dataloaders.SessionsLoader.loadSessionsFromParquet
+import capstone.util.ConfigLoader
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 
 object ProjectionWizard {
 
-  def getProjectionsWithSQL: DataFrame = {
-    loadSessionsFromParquet().createOrReplaceTempView("s")
-    loadPurchasesFromParquet().createOrReplaceTempView("p") //TODO Change name of table to some sensible
+  val ProjectionsParquetPath: String = ConfigLoader.projectionConfig.getString("parquet")
 
-//TODO Move all sql statements to seprate variables, apply SQL format and add .stripMargin function
+  def sessions: DataFrame = loadSessionsFromParquet()
+
+  def purchases: DataFrame = loadPurchasesFromParquet()
+
+  def getProjectionsWithSQL: DataFrame = {
+    sessions.createOrReplaceTempView("sessions")
+    purchases.createOrReplaceTempView("purchases")
+
     val sqlStatement =
       """
        SELECT
-        p.purchaseId,
+        purchases.purchaseId,
         purchaseTime,
         billingCost,
         isConfirmed,
         sessionId,
         campaignId,
         channelId
-       FROM s
-       JOIN p ON s.purchaseId = p.purchaseId
+       FROM sessions
+       JOIN purchases ON sessions.purchaseId = purchases.purchaseId
       """.stripMargin
 
-    sqlContext.sql(
-      "SELECT p.purchaseId, purchaseTime, billingCost, " +
-                     "isConfirmed, sessionId, campaignId, channelId " +
-        "FROM s JOIN p ON s.purchaseId = p.purchaseId")
+    sqlContext.sql(sqlStatement)
   }
 
-  def getProjectionsWithAPI: DataFrame = {
-    loadSessionsFromParquet().join(loadPurchasesFromParquet(), "purchaseId")
-  }
+  def getProjectionsWithAPI: DataFrame = sessions.join(purchases, "purchaseId")
 
   def loadProjectionsFromParquet(): DataFrame = {
     spark.read
-      .load("file:////Users/keliseev/Downloads/GridUCapstone/src/resource/out/projections.parquet") //TODO please use relative path.
+      .load(ProjectionsParquetPath)
   }
 
   import spark.implicits._
@@ -53,6 +54,6 @@ object ProjectionWizard {
     getProjectionsWithAPI
       .write
       .mode(SaveMode.Overwrite)
-      .parquet("file:////Users/keliseev/Downloads/GridUCapstone/src/resource/out/projections.parquet") //TODO please use relative path.
+      .parquet(ProjectionsParquetPath)
   }
 }

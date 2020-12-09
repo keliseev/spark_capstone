@@ -1,21 +1,25 @@
 package capstone.dataloaders
 
 import capstone.DemoApp.spark
+import capstone.DemoApp.spark.implicits._
 import capstone.caseclasses.Purchase
+import capstone.util.ConfigLoader
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 
 object PurchasesLoader {
 
+  val PurchasesParquetPath: String = ConfigLoader.purchasesConfig.getString("parquet")
+
+  val PurchasesCSVPath: String = ConfigLoader.purchasesConfig.getString("csv")
+
   def loadPurchasesFromCSV(): DataFrame =
     spark.read
       .options(Map("header" -> "true", "inferSchema" -> "true"))
-      .csv("src/resource/capstone-dataset/user_purchases/user_purchases_0.csv.gz")
+      .csv(PurchasesCSVPath)
 
   def loadPurchasesFromParquet(): DataFrame =
     spark.read
-      .load("file:////Users/keliseev/Downloads/GridUCapstone/src/resource/out/purchases.parquet")
-
-  import spark.implicits._
+      .load(PurchasesParquetPath)
 
   def loadPurchasesDataset(): Dataset[Purchase] = {
     loadPurchasesFromParquet().as[Purchase]
@@ -25,5 +29,5 @@ object PurchasesLoader {
     loadPurchasesFromCSV()
       .write
       .mode(SaveMode.Overwrite)
-      .parquet("file:////Users/keliseev/Downloads/GridUCapstone/src/resource/out/purchases.parquet")
+      .parquet(PurchasesParquetPath)
 }
