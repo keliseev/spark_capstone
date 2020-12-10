@@ -83,7 +83,6 @@ object SessionsLoader {
 
     override def finish(reduction: ArrayBuffer[(String, (String, String))]): Seq[Map[String, String]] = {
       reduction
-        .toArray
         //grouping by session id
         .groupBy(_._1)
         .values
@@ -99,5 +98,4 @@ object SessionsLoader {
     override def outputEncoder: Encoder[Seq[Map[String, String]]] =
       implicitly(ExpressionEncoder[Seq[Map[String, String]]])
   }
-
 }

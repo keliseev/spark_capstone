@@ -50,7 +50,7 @@ object ProjectionWizard {
     loadProjectionsFromParquet().as[Projection]
   }
 
-  def convertProjectionsToParquet(): Unit = {
+  def refreshProjections(): Unit = {
     getProjectionsWithAPI
       .write
       .mode(SaveMode.Overwrite)

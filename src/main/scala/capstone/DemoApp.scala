@@ -1,7 +1,10 @@
 package capstone
 
-import capstone.CampaignsAnalyzer.{showTopProfitableCampaignsAPI, showTopProfitableCampaignsSQL}
-import capstone.ChannelsAnalyzer.{showTopChannelsAPI, showTopChannelsSQL}
+import capstone.analyzers.CampaignsAnalyzer.{showTopProfitableCampaignsAPI, showTopProfitableCampaignsSQL}
+import capstone.analyzers.ChannelsAnalyzer.{showTopChannelsAPI, showTopChannelsSQL}
+import capstone.dataloaders.PurchasesLoader.convertPurchasesToParquet
+import capstone.dataloaders.SessionsLoader.convertSessionsToParquet
+import capstone.projection.ProjectionWizard.refreshProjections
 import capstone.util.TimingUtil.timed
 import org.apache.spark.sql.SparkSession
 
@@ -17,14 +20,21 @@ object DemoApp {
   spark.sparkContext.setLogLevel("ERROR")
 
   def main(args: Array[String]): Unit = {
-    println("Starting...")
-    println()
+    println("Refreshing data...")
 
-    //        timed("campaigns api", showTopProfitableCampaignsAPI())
-    //        timed("campaigns sql", showTopProfitableCampaignsSQL())
+    //load data from CSV
+    timed("Loading sessions from csv", convertSessionsToParquet())
+    timed("Loading purchases from csv", convertPurchasesToParquet())
+    //building projections
+    timed("Creating projections for sessions with purchases", refreshProjections())
 
-    timed("campaigns sql", showTopChannelsSQL())
-    timed("campaigns api", showTopChannelsAPI())
+    //getting top 10 marketing campaigns with most confirmed revenue
+    timed("Top 10 campaigns with SQL", showTopProfitableCampaignsSQL())
+    timed("Top 10 campaigns with API", showTopProfitableCampaignsAPI())
+
+    //getting channel with most unique sessions for each campaign
+    timed("Most popular channel per campaign SQL", showTopChannelsSQL())
+    timed("Most popular channel per campaign API", showTopChannelsAPI())
 
     spark.stop()
   }
