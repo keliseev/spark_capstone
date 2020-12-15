@@ -8,8 +8,9 @@ import capstone.dataloaders.SessionsLoader.loadSessionsFromParquet
 import capstone.util.ConfigLoader
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 
-object ProjectionWizard {
+object ProjectionWizard extends ProjectionWizard
 
+class ProjectionWizard {
   val ProjectionsParquetPath: String = ConfigLoader.projectionConfig.getString("parquet")
 
   def sessions: DataFrame = loadSessionsFromParquet()
@@ -46,14 +47,12 @@ object ProjectionWizard {
 
   import spark.implicits._
 
-  def loadProjectionsDataset(): Dataset[Projection] = {
+  def loadProjectionsDataset(): Dataset[Projection] =
     loadProjectionsFromParquet().as[Projection]
-  }
 
-  def refreshProjections(): Unit = {
+  def refreshProjections(): Unit =
     getProjectionsWithAPI
       .write
       .mode(SaveMode.Overwrite)
       .parquet(ProjectionsParquetPath)
-  }
 }

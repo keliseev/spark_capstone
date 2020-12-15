@@ -2,13 +2,18 @@ package capstone.analyzers
 
 import capstone.DemoApp.spark.implicits._
 import capstone.DemoApp.spark.sqlContext
-import capstone.projection.ProjectionWizard.loadProjectionsFromParquet
+import capstone.projection.ProjectionWizard
 import org.apache.spark.sql.functions.sum
 
-object CampaignsAnalyzer {
+object CampaignsAnalyzer extends CampaignsAnalyzer
+
+class CampaignsAnalyzer {
+
+  val wizard: ProjectionWizard = ProjectionWizard
 
   def showTopProfitableCampaignsSQL(): Unit = {
-    loadProjectionsFromParquet().createOrReplaceTempView("projections")
+    wizard.loadProjectionsFromParquet()
+      .createOrReplaceTempView("projections")
 
     val sqlStatement =
       """
@@ -29,7 +34,7 @@ object CampaignsAnalyzer {
   }
 
   def showTopProfitableCampaignsAPI(): Unit = {
-    loadProjectionsFromParquet()
+    wizard.loadProjectionsFromParquet()
       .where($"isConfirmed")
       .groupBy($"campaignId")
       .agg(sum($"billingCost").as("confirmedRevenue"))

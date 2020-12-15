@@ -25,6 +25,7 @@ object DemoApp {
     //load data from CSV
     timed("Loading sessions from csv", convertSessionsToParquet())
     timed("Loading purchases from csv", convertPurchasesToParquet())
+
     //building projections
     timed("Creating projections for sessions with purchases", refreshProjections())
 

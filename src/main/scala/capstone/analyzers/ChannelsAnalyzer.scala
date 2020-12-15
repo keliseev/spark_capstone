@@ -2,14 +2,19 @@ package capstone.analyzers
 
 import capstone.DemoApp.spark.implicits._
 import capstone.DemoApp.spark.sqlContext
-import capstone.projection.ProjectionWizard.loadProjectionsFromParquet
+import capstone.projection.ProjectionWizard
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions.{count, row_number}
 
-object ChannelsAnalyzer {
+object ChannelsAnalyzer extends ChannelsAnalyzer
+
+class ChannelsAnalyzer {
+
+  val wizard: ProjectionWizard = ProjectionWizard
 
   def showTopChannelsSQL(): Unit = {
-    loadProjectionsFromParquet().createOrReplaceTempView("projections")
+    wizard.loadProjectionsFromParquet()
+      .createOrReplaceTempView("projections")
 
     val sqlStatement =
       """
@@ -35,7 +40,8 @@ object ChannelsAnalyzer {
     val w = Window.partitionBy($"campaignId")
       .orderBy($"uniqueSessions".desc)
 
-    val temp = loadProjectionsFromParquet()
+    val temp = wizard
+      .loadProjectionsFromParquet()
       .groupBy($"campaignId", $"channelId")
       .agg(count($"sessionId").as("uniqueSessions"))
 

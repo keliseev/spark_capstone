@@ -7,7 +7,9 @@ import capstone.util.ConfigLoader
 import org.apache.spark.sql.types.DecimalType
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 
-object PurchasesLoader {
+object PurchasesLoader extends PurchasesLoader
+
+class PurchasesLoader {
 
   val PurchasesParquetPath: String = ConfigLoader.purchasesConfig.getString("parquet")
 
@@ -23,9 +25,8 @@ object PurchasesLoader {
     spark.read
       .load(PurchasesParquetPath)
 
-  def loadPurchasesDataset(): Dataset[Purchase] = {
+  def loadPurchasesDataset(): Dataset[Purchase] =
     loadPurchasesFromParquet().as[Purchase]
-  }
 
   def convertPurchasesToParquet(): Unit =
     loadPurchasesFromCSV()
