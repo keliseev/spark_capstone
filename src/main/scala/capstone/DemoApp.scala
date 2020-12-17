@@ -2,9 +2,7 @@ package capstone
 
 import capstone.analyzers.CampaignsAnalyzer.{showTopProfitableCampaignsAPI, showTopProfitableCampaignsSQL}
 import capstone.analyzers.ChannelsAnalyzer.{showTopChannelsAPI, showTopChannelsSQL}
-import capstone.dataloaders.PurchasesLoader.{convertPurchasesToParquet, loadPurchasesFromCSV}
-import capstone.dataloaders.SessionsLoader.convertSessionsToParquet
-import capstone.projection.ProjectionWizard.{getProjectionsWithAPI, refreshProjections}
+import capstone.projection.ProjectionWizard.refreshProjections
 import org.apache.spark.sql.SparkSession
 
 object DemoApp {
