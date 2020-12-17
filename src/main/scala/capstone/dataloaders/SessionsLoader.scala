@@ -9,7 +9,7 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.expressions.Aggregator
 import org.apache.spark.sql.functions.{explode, from_json}
 import org.apache.spark.sql.types.{MapType, StringType}
-import org.apache.spark.sql._
+import org.apache.spark.sql.{DataFrame, Dataset, Encoder, Row, SaveMode}
 
 import java.util.UUID
 import scala.collection.mutable.ArrayBuffer
@@ -84,12 +84,8 @@ class SessionsLoader {
         $"col".getItem("campaignId").as("campaignId"),
         $"col".getItem("channelId").as("channelId"))
 
-  def loadSessionsFromParquet(): DataFrame =
-    spark.read
-      .load(SessionsParquetPath)
-
-  def loadSessionsDataset(): Dataset[Session] =
-    loadSessionsFromParquet().as[Session]
+  def loadSessionsAsDataset(): Dataset[Session] =
+    loadSessionsFromCSV().as[Session]
 
   def convertSessionsToParquet(): Unit =
     loadSessionsFromCSV()

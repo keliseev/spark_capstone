@@ -3,8 +3,8 @@ package capstone.projection
 import capstone.DemoApp.spark
 import capstone.DemoApp.spark.sqlContext
 import capstone.caseclasses.Projection
-import capstone.dataloaders.PurchasesLoader.loadPurchasesFromParquet
-import capstone.dataloaders.SessionsLoader.loadSessionsFromParquet
+import capstone.dataloaders.PurchasesLoader.loadPurchasesFromCSV
+import capstone.dataloaders.SessionsLoader.loadSessionsFromCSV
 import capstone.util.ConfigLoader
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 
@@ -12,10 +12,8 @@ object ProjectionWizard extends ProjectionWizard
 
 class ProjectionWizard {
   val ProjectionsParquetPath: String = ConfigLoader.projectionConfig.getString("parquet")
-
-  def sessions: DataFrame = loadSessionsFromParquet()
-
-  def purchases: DataFrame = loadPurchasesFromParquet()
+  def sessions: DataFrame = loadSessionsFromCSV()
+  def purchases: DataFrame = loadPurchasesFromCSV()
 
   def getProjectionsWithSQL: DataFrame = {
     sessions.createOrReplaceTempView("sessions")
@@ -23,16 +21,15 @@ class ProjectionWizard {
 
     val sqlStatement =
       """
-       SELECT
-        purchases.purchaseId,
-        purchaseTime,
-        billingCost,
-        isConfirmed,
-        sessionId,
-        campaignId,
-        channelId
-       FROM sessions
-       JOIN purchases ON sessions.purchaseId = purchases.purchaseId
+        |SELECT purchases.purchaseId,
+        |       purchaseTime,
+        |       billingCost,
+        |       isConfirmed,
+        |       sessionId,
+        |       campaignId,
+        |       channelId
+        |FROM sessions
+        |JOIN purchases ON sessions.purchaseId = purchases.purchaseId
       """.stripMargin
 
     sqlContext.sql(sqlStatement)
@@ -43,11 +40,12 @@ class ProjectionWizard {
   def loadProjectionsFromParquet(): DataFrame = {
     spark.read
       .load(ProjectionsParquetPath)
+      .coalesce(10)
   }
 
   import spark.implicits._
 
-  def loadProjectionsDataset(): Dataset[Projection] =
+  def loadProjectionsAsDataset(): Dataset[Projection] =
     loadProjectionsFromParquet().as[Projection]
 
   def refreshProjections(): Unit =

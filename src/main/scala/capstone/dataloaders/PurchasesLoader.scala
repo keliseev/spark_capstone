@@ -10,9 +10,7 @@ import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 object PurchasesLoader extends PurchasesLoader
 
 class PurchasesLoader {
-
   val PurchasesParquetPath: String = ConfigLoader.purchasesConfig.getString("parquet")
-
   val PurchasesCSVPath: String = ConfigLoader.purchasesConfig.getString("csv")
 
   def loadPurchasesFromCSV(): DataFrame =
@@ -21,12 +19,8 @@ class PurchasesLoader {
       .csv(PurchasesCSVPath)
       .withColumn("billingCost", $"billingCost".cast(DecimalType(10, 2)))
 
-  def loadPurchasesFromParquet(): DataFrame =
-    spark.read
-      .load(PurchasesParquetPath)
-
-  def loadPurchasesDataset(): Dataset[Purchase] =
-    loadPurchasesFromParquet().as[Purchase]
+  def loadPurchasesAsDataset(): Dataset[Purchase] =
+    loadPurchasesFromCSV().as[Purchase]
 
   def convertPurchasesToParquet(): Unit =
     loadPurchasesFromCSV()

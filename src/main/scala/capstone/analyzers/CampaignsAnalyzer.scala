@@ -17,16 +17,22 @@ class CampaignsAnalyzer {
 
     val sqlStatement =
       """
-       SELECT campaignId,
-              sum(billingCost) AS confirmedRevenue
-       FROM
-         (SELECT campaignId,
-                 billingCost,
-                 isConfirmed
-          FROM projections
-          WHERE isConfirmed = 'true')
-       GROUP BY campaignId
-       ORDER BY confirmedRevenue DESC
+        |SELECT
+        | campaignId,
+        | sum(billingCost) AS confirmedRevenue
+        |FROM (
+        | SELECT
+        |  campaignId,
+        |  billingCost,
+        |  isConfirmed
+        | FROM
+        |  projections
+        | WHERE
+        |  isConfirmed = 'true')
+        |GROUP BY
+        | campaignId
+        |ORDER BY
+        | confirmedRevenue DESC
       """.stripMargin
 
     sqlContext.sql(sqlStatement)

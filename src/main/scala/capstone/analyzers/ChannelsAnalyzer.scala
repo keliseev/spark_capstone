@@ -18,22 +18,28 @@ class ChannelsAnalyzer {
 
     val sqlStatement =
       """
-       SELECT campaignId,
-              channelId
-       FROM
-         (SELECT campaignId,
-                 channelId,
-                 RANK() OVER (PARTITION BY campaignId
-                              ORDER BY count(sessionId) DESC) AS rank
-          FROM projections
-          GROUP BY campaignId,
-                   channelId) tmp
-       WHERE rank = 1
-       ORDER BY campaignId
+        |SELECT
+        | campaignId,
+        | channelId
+        |FROM (
+        | SELECT
+        |  campaignId,
+        |  channelId,
+        |  RANK() OVER (PARTITION BY campaignId
+        |               ORDER BY count(sessionId) DESC) AS rank
+        | FROM
+        |  projections
+        | GROUP BY
+        |  campaignId,
+        |  channelId) tmp
+        |WHERE
+        | rank = 1
+        |ORDER BY
+        | campaignId
       """.stripMargin
 
     sqlContext.sql(sqlStatement)
-      .show(25, false)
+      .show(25, truncate = false)
   }
 
   def showTopChannelsAPI(): Unit = {
@@ -50,6 +56,6 @@ class ChannelsAnalyzer {
       .drop("row")
       .drop("uniqueSessions")
       .orderBy($"campaignId")
-      .show(25, false)
+      .show(25, truncate = false)
   }
 }
