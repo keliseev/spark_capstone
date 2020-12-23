@@ -1,7 +1,6 @@
 package scala.capstone.analyzers
 
-import org.apache.spark.sql.{DataFrame, Row}
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.DataFrame
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.capstone.dao.{ProjectionsDAO, PurchasesDAO, SessionsDAO}
