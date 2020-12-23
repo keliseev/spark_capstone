@@ -2,18 +2,14 @@ package capstone.analyzers
 
 import capstone.DemoApp.spark.implicits._
 import capstone.DemoApp.spark.sqlContext
-import capstone.projection.ProjectionWizard
+import capstone.dao.ProjectionsDAO
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions.{count, row_number}
 
-object ChannelsAnalyzer extends ChannelsAnalyzer
-
-class ChannelsAnalyzer {
-
-  val wizard: ProjectionWizard = ProjectionWizard
+class ChannelsAnalyzer(projectionsDao: ProjectionsDAO) {
 
   def showTopChannelsSQL(): Unit = {
-    wizard.loadProjectionsFromParquet()
+    projectionsDao.loadProjectionsFromParquet()
       .createOrReplaceTempView("projections")
 
     val sqlStatement =
@@ -25,15 +21,15 @@ class ChannelsAnalyzer {
         | SELECT
         |  campaignId,
         |  channelId,
-        |  RANK() OVER (PARTITION BY campaignId
-        |               ORDER BY count(sessionId) DESC) AS rank
+        |  ROW_NUMBER() OVER (PARTITION BY campaignId
+        |               ORDER BY count(sessionId) DESC) AS row
         | FROM
         |  projections
         | GROUP BY
         |  campaignId,
         |  channelId) tmp
         |WHERE
-        | rank = 1
+        | row = 1
         |ORDER BY
         | campaignId
       """.stripMargin
@@ -46,7 +42,7 @@ class ChannelsAnalyzer {
     val w = Window.partitionBy($"campaignId")
       .orderBy($"uniqueSessions".desc)
 
-    val temp = wizard
+    val temp = projectionsDao
       .loadProjectionsFromParquet()
       .groupBy($"campaignId", $"channelId")
       .agg(count($"sessionId").as("uniqueSessions"))

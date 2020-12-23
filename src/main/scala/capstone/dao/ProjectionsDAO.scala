@@ -1,21 +1,20 @@
-package capstone.projection
+package capstone.dao
 
 import capstone.DemoApp.spark
+import capstone.DemoApp.spark.implicits._
 import capstone.DemoApp.spark.sqlContext
-import capstone.caseclasses.Projection
-import capstone.dataloaders.PurchasesLoader.loadPurchasesFromCSV
-import capstone.dataloaders.SessionsLoader.loadSessionsFromCSV
+import capstone.model._
 import capstone.util.ConfigLoader
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 
-object ProjectionWizard extends ProjectionWizard
+class ProjectionsDAO {
 
-class ProjectionWizard {
   val ProjectionsParquetPath: String = ConfigLoader.projectionConfig.getString("parquet")
-  def sessions: DataFrame = loadSessionsFromCSV()
-  def purchases: DataFrame = loadPurchasesFromCSV()
 
-  def getProjectionsWithSQL: DataFrame = {
+  val sessions: DataFrame = new SessionsDAO(ConfigLoader.sessionsConfig.getString("csv")).loadSessionsFromCSV()
+  val purchases: DataFrame = new PurchasesDAO(ConfigLoader.purchasesConfig.getString("csv")).loadPurchasesFromCSV()
+
+  def loadProjectionsSQL: DataFrame = {
     sessions.createOrReplaceTempView("sessions")
     purchases.createOrReplaceTempView("purchases")
 
@@ -35,22 +34,21 @@ class ProjectionWizard {
     sqlContext.sql(sqlStatement)
   }
 
-  def getProjectionsWithAPI: DataFrame = sessions.join(purchases, "purchaseId")
+  def loadProjectionsAPI: DataFrame = sessions.join(purchases, "purchaseId")
 
   def loadProjectionsFromParquet(): DataFrame = {
     spark.read
       .load(ProjectionsParquetPath)
-      .coalesce(10)
   }
 
-  import spark.implicits._
-
-  def loadProjectionsAsDataset(): Dataset[Projection] =
+  def loadProjectionsAsDataset(): Dataset[Projection] = {
     loadProjectionsFromParquet().as[Projection]
+  }
 
-  def refreshProjections(): Unit =
-    getProjectionsWithAPI
+  def convertProjectionsToParquet(): Unit = {
+    loadProjectionsAPI
       .write
       .mode(SaveMode.Overwrite)
       .parquet(ProjectionsParquetPath)
+  }
 }

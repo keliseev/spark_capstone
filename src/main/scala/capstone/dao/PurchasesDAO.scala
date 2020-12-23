@@ -1,30 +1,28 @@
-package capstone.dataloaders
+package capstone.dao
 
 import capstone.DemoApp.spark
 import capstone.DemoApp.spark.implicits._
-import capstone.caseclasses.Purchase
+import capstone.model._
 import capstone.util.ConfigLoader
 import org.apache.spark.sql.types.DecimalType
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 
-object PurchasesLoader extends PurchasesLoader
+class PurchasesDAO(csvPath: String) {
 
-class PurchasesLoader {
-  val PurchasesParquetPath: String = ConfigLoader.purchasesConfig.getString("parquet")
-  val PurchasesCSVPath: String = ConfigLoader.purchasesConfig.getString("csv")
+  val parquetPath: String = ConfigLoader.purchasesConfig.getString("parquet")
 
   def loadPurchasesFromCSV(): DataFrame =
     spark.read
       .options(Map("header" -> "true", "inferSchema" -> "true"))
-      .csv(PurchasesCSVPath)
+      .csv(csvPath)
       .withColumn("billingCost", $"billingCost".cast(DecimalType(10, 2)))
 
   def loadPurchasesAsDataset(): Dataset[Purchase] =
     loadPurchasesFromCSV().as[Purchase]
 
-  def convertPurchasesToParquet(): Unit =
+  def saveCSVPurchasesToParquet(): Unit =
     loadPurchasesFromCSV()
       .write
       .mode(SaveMode.Overwrite)
-      .parquet(PurchasesParquetPath)
+      .parquet(parquetPath)
 }
