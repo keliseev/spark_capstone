@@ -17,7 +17,6 @@ class SessionsDAO(csvPath: String) {
       .options(Map("header" -> "true", "inferSchema" -> "true"))
       .csv(csvPath)
       .withColumn("attributes", from_json($"attributes", MapType(keyType = StringType, valueType = StringType)))
-      .orderBy($"userId", $"eventTime")
       .groupBy($"userId")
       .agg(ClickStreamAggregator.toColumn.alias("sessionParams"))
       .select($"userId", explode($"sessionParams"))
