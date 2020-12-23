@@ -2,7 +2,7 @@ package capstone.dao
 
 import capstone.DemoApp.spark
 import capstone.DemoApp.spark.implicits._
-import capstone.model.Session
+import capstone.Model.Session
 import capstone.util.{ClickStreamAggregator, ConfigLoader}
 import org.apache.spark.sql.functions.{explode, from_json}
 import org.apache.spark.sql.types.{MapType, StringType}

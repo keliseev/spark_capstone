@@ -3,7 +3,7 @@ package capstone.dao
 import capstone.DemoApp.spark
 import capstone.DemoApp.spark.implicits._
 import capstone.DemoApp.spark.sqlContext
-import capstone.model._
+import capstone.Model.Projection
 import capstone.util.ConfigLoader
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 

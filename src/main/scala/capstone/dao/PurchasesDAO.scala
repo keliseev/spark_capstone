@@ -2,7 +2,7 @@ package capstone.dao
 
 import capstone.DemoApp.spark
 import capstone.DemoApp.spark.implicits._
-import capstone.model._
+import capstone.Model.Purchase
 import capstone.util.ConfigLoader
 import org.apache.spark.sql.types.DecimalType
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
