@@ -1,4 +1,4 @@
-package capstone.dao
+package scala.capstone.dao
 
 import capstone.DemoApp.spark
 import capstone.DemoApp.spark.implicits._

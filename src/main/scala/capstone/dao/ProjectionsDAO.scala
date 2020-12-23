@@ -1,4 +1,4 @@
-package capstone.dao
+package scala.capstone.dao
 
 import capstone.DemoApp.spark
 import capstone.DemoApp.spark.implicits._
@@ -45,7 +45,7 @@ class ProjectionsDAO {
     loadProjectionsFromParquet().as[Projection]
   }
 
-  def convertProjectionsToParquet(): Unit = {
+  def refreshProjections(): Unit = {
     loadProjectionsAPI
       .write
       .mode(SaveMode.Overwrite)

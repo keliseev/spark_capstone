@@ -1,12 +1,12 @@
-package capstone.util
+package scala.capstone.util
 
-import capstone.Model.{EventFlow, SessionParams, SessionWithParams}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.expressions.Aggregator
 import org.apache.spark.sql.{Encoder, Row}
 
 import java.sql.Timestamp
 import java.util.UUID
+import scala.capstone.Model.{EventFlow, SessionParams, SessionWithParams}
 import scala.collection.mutable.ArrayBuffer
 
 case object ClickStreamAggregator extends Aggregator[Row, ArrayBuffer[EventFlow], Seq[SessionParams]] {

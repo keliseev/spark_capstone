@@ -1,4 +1,4 @@
-package capstone
+package scala.capstone
 
 import capstone.analyzers.{CampaignsAnalyzer, ChannelsAnalyzer}
 import capstone.dao.ProjectionsDAO
@@ -31,9 +31,9 @@ object DemoApp {
 
     log.info("Refreshing data...")
 
-    projectionsDao.convertProjectionsToParquet()
+    projectionsDao.refreshProjections()
 
-//    getting top 10 marketing campaigns with most confirmed revenue
+    //getting top 10 marketing campaigns with most confirmed revenue
     campaignsAnalyzer.showTopProfitableCampaignsAPI()
 
     //getting channel with most unique sessions for each campaign

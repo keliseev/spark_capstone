@@ -1,11 +1,11 @@
 userId,eventId,eventType,eventTime,attributes
-5c1b55f7-1513-4304-afee-0febb50aeb6f,c4fdc1d2-64cc-473b-928a-02b4b1a58427,app_open,2020-09-21 12:09:36,"{'campaign_id': 764, 'channel_id': 'VK Ads'}"
-5c1b55f7-1513-4304-afee-0febb50aeb6f,7277fa4e-9a38-4c8e-bf13-1ff4fec928e3,search_product,2020-09-21 12:16:59,
-5c1b55f7-1513-4304-afee-0febb50aeb6f,301c150d-77d4-460c-b3ef-71325da98fad,view_product_details,2020-09-21 12:18:00,
-5c1b55f7-1513-4304-afee-0febb50aeb6f,bb10b44e-2fc4-4ad5-bfe3-cba67fa5b696,purchase,2020-09-21 12:29:54,{'purchase_id': 'da02df74-4a89-452a-9313-15877b84ba2d'}
-5c1b55f7-1513-4304-afee-0febb50aeb6f,88e38a7a-58d6-4d1e-9097-6b85bfed70ac,app_close,2020-09-21 12:33:54,
-5c1b55f7-1513-4304-afee-0febb50aeb6f,4c2b6db7-dd6c-4442-9dbb-7ed6b140a281,app_open,2020-10-28 11:19:23,"{'campaign_id': 123, 'channel_id': 'Twitter Ads'}"
-5c1b55f7-1513-4304-afee-0febb50aeb6f,a0fa17f3-4e30-4459-b5f6-517006404aec,search_product,2020-10-28 11:24:26,
-5c1b55f7-1513-4304-afee-0febb50aeb6f,ec23436a-ed56-4619-8883-592ad3d34c59,view_product_details,2020-10-28 11:26:52,
-5c1b55f7-1513-4304-afee-0febb50aeb6f,e30711c1-062b-4163-a403-3018487e9414,purchase,2020-10-28 11:30:14,{'purchase_id': 'c1cb4221-01de-492f-8894-2108191e63b8'}
-5c1b55f7-1513-4304-afee-0febb50aeb6f,a2639311-ac50-43d0-9747-c7ea78790dcc,app_close,2020-10-28 11:32:14
+user1,event1,app_open,2020-01-01 10:00:00,"{'campaign_id': 'c1', 'channel_id': 'ch1'}"
+user1,event2,search_product,2020-01-01 10:01:02,
+user1,event3,view_product_details,2020-01-01 10:02:00,
+user1,event4,purchase,2020-01-01 10:03:00,{'purchase_id': 'pur1'}
+user1,event5,app_close,2020-01-01 10:04:00,
+user1,event6,app_open,2020-01-01 12:00:00,"{'campaign_id': 'c2', 'channel_id': 'ch2'}"
+user1,event7,search_product,2020-01-01 12:01:00,
+user1,event8,view_product_details,2020-01-01 12:02:00,
+user1,event9,purchase,2020-01-01 12:03:00,{'purchase_id': 'pur2'}
+user1,event10,app_close,2020-01-01 12:04:00,

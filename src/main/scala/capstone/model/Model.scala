@@ -1,4 +1,4 @@
-package capstone
+package scala.capstone
 
 import org.apache.spark.sql.types.Decimal
 import java.sql.Timestamp

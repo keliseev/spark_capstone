@@ -1,4 +1,6 @@
-package capstone.analyzers
+package scala.capstone.analyzers
+
+import org.apache.spark.sql.DataFrame
 
 import capstone.DemoApp.spark.implicits._
 import capstone.DemoApp.spark.sqlContext
@@ -8,9 +10,8 @@ import org.apache.spark.sql.functions.{count, row_number}
 
 class ChannelsAnalyzer(projectionsDao: ProjectionsDAO) {
 
-  def showTopChannelsSQL(): Unit = {
-    projectionsDao.loadProjectionsFromParquet()
-      .createOrReplaceTempView("projections")
+  def getTopChannelsSQL(source: DataFrame): DataFrame = {
+    source.createOrReplaceTempView("projections")
 
     val sqlStatement =
       """
@@ -35,15 +36,18 @@ class ChannelsAnalyzer(projectionsDao: ProjectionsDAO) {
       """.stripMargin
 
     sqlContext.sql(sqlStatement)
-      .show(25, truncate = false)
   }
 
-  def showTopChannelsAPI(): Unit = {
+  def showTopChannelsSQL(): Unit =
+    getTopChannelsSQL(projectionsDao.loadProjectionsFromParquet())
+      .show(25, truncate = false)
+
+  def getTopChannelsAPI(source: DataFrame): DataFrame = {
     val w = Window.partitionBy($"campaignId")
       .orderBy($"uniqueSessions".desc)
 
-    val temp = projectionsDao
-      .loadProjectionsFromParquet()
+    val temp =
+      source
       .groupBy($"campaignId", $"channelId")
       .agg(count($"sessionId").as("uniqueSessions"))
 
@@ -52,6 +56,9 @@ class ChannelsAnalyzer(projectionsDao: ProjectionsDAO) {
       .drop("row")
       .drop("uniqueSessions")
       .orderBy($"campaignId")
-      .show(25, truncate = false)
   }
+
+  def showTopChannelsAPI(): Unit = getTopChannelsAPI(projectionsDao.loadProjectionsFromParquet()).show(25, truncate = false)
+
+  def getTopChannelsFromCSV: DataFrame = getTopChannelsAPI(projectionsDao.loadProjectionsAPI)
 }

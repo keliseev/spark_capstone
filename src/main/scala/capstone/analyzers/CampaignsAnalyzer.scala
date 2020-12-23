@@ -1,4 +1,6 @@
-package capstone.analyzers
+package scala.capstone.analyzers
+
+import org.apache.spark.sql.DataFrame
 
 import capstone.DemoApp.spark.implicits._
 import capstone.DemoApp.spark.sqlContext
@@ -7,9 +9,8 @@ import org.apache.spark.sql.functions.sum
 
 class CampaignsAnalyzer(projectionsDao: ProjectionsDAO) {
 
-  def showTopProfitableCampaignsSQL(): Unit = {
-    projectionsDao.loadProjectionsFromParquet()
-      .createOrReplaceTempView("projections")
+  def getTopProfitableCampaignsSQL(source: DataFrame): DataFrame = {
+    source.createOrReplaceTempView("projections")
 
     val sqlStatement =
       """
@@ -32,15 +33,25 @@ class CampaignsAnalyzer(projectionsDao: ProjectionsDAO) {
       """.stripMargin
 
     sqlContext.sql(sqlStatement)
+  }
+
+  def showTopProfitableCampaignsSQL(): Unit = {
+    getTopProfitableCampaignsSQL(projectionsDao.loadProjectionsFromParquet())
       .show(10, truncate = false)
   }
 
-  def showTopProfitableCampaignsAPI(): Unit = {
-    projectionsDao.loadProjectionsFromParquet()
+  def getTopProfitableCampaignsAPI(source: DataFrame): DataFrame = {
+    source
       .where($"isConfirmed")
       .groupBy($"campaignId")
       .agg(sum($"billingCost").as("confirmedRevenue"))
       .sort($"confirmedRevenue".desc)
+  }
+
+  def showTopProfitableCampaignsAPI(): Unit = {
+    getTopProfitableCampaignsAPI(projectionsDao.loadProjectionsFromParquet())
       .show(10, truncate = false)
   }
+
+  def getTopCampaignsFromCSV: DataFrame = getTopProfitableCampaignsAPI(projectionsDao.loadProjectionsAPI)
 }

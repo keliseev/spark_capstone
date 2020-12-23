@@ -1,4 +1,4 @@
-package capstone.util
+package scala.capstone.util
 
 import com.typesafe.config.{Config, ConfigFactory}
 
