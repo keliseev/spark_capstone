@@ -7,7 +7,7 @@ user activity and purchases statistic.
 
 * Oracle Java 8+
 * IDE IntelliJ IDEA
-
+* For the SBT usage, the IDE should have [SBT plugin](https://plugins.jetbrains.com/plugin/5007-sbt)
 ## Executing
 In IDE only at the moment. Can be compiled
 ```bash
