@@ -3,6 +3,11 @@
 Provides analysis based on two datasets: click stream representing 
 user activity and purchases statistic.
 
+### Prerequisites
+
+* Oracle Java 8+
+* IDE IntelliJ IDEA
+
 ## Executing
 In IDE only at the moment. Can be compiled
 ```bash
